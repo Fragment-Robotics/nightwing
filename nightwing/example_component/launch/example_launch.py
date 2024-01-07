@@ -11,12 +11,12 @@ def generate_launch_description():
     executable="component_container",
     composable_node_descriptions=[
       ComposableNode(
-        package="example_package",
+        package="nightwing_example_package",
         plugin="nightwing::Talker",
         name="example_talker"
       ),
       ComposableNode(
-        package="example_package",
+        package="nightwing_example_package",
         plugin="nightwing::Listener",
         name="example_listener"
       )

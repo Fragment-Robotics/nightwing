@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>example_package</name>
+  <name>nightwing_example_package</name>
   <version>0.0.0</version>
   <description>Simple listener and talker example component</description>
   <maintainer email="grd@todo.todo">grd</maintainer>
