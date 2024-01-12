@@ -1,9 +1,12 @@
 import os
 from datetime import datetime
+import yaml
+from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
+from launch.conditions import IfCondition
 from launch.actions import ExecuteProcess, DeclareLaunchArgument, GroupAction
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import ComposableNodeContainer
@@ -15,11 +18,21 @@ def generate_launch_description():
   # would be to have launch files defined for each module of the stack i.e.,
   # localization, panoptic seg, mapping, etc and the platform_common launches
   # would load those.
-  rosbag_path = LaunchConfiguration('rosbag_path', default=f'/data/rosbags/{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}')
+  log_data = LaunchConfiguration('log_data')
+  rosbag_path = LaunchConfiguration('rosbag_path')
 
+  # Cmd line args
+  log_data_arg = DeclareLaunchArgument('log_data', default_value='False')
+  rosbag_path_arg = DeclareLaunchArgument('rosbag_path', default_value=f'/data/rosbags/{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}')
+
+  # Configuration loading
   realsense_config_file_path = os.path.join(
     get_package_share_directory('nightwing_platform_common'),
     'config/vision/realsense.yaml'
+  )
+  log_topics_file = os.path.join(
+    get_package_share_directory('nightwing_platform_common'),
+    'config/log_topics.yaml'
   )
 
   # If we want to log data, we also spin up the image processing nodes
@@ -41,31 +54,33 @@ def generate_launch_description():
           {'use_intra_process_comms': True}
         ]
       ),
-      ComposableNode(
-        package='isaac_ros_image_proc',
-        plugin='nvidia::isaac_ros::image_proc::ImageFormatConverterNode',
-        name='depth_format_node',
-        parameters=[{
-          'encoding_desired': 'rgb8',
-        }],
-        remappings=[
-          ('image_raw', '/depth/image_rect_raw'),
-          ('image', '/depth/image_rect_rgb8'),
-        ],
-      ),
-      ComposableNode(
-        package='isaac_ros_image_proc',
-        plugin='nvidia::isaac_ros::image_proc::ImageEncoderNode',
-        name='depth_encoder_node',
-        parameters=[{
-          'input_width': 1280,
-          'input_height': 720,
-        }],
-        remappings=[
-          ('image_raw', '/depth/image_rect_rgb8'),
-          ('image_compressed', '/depth/image_rect_compressed'),
-        ],
-      ),
+      # ComposableNode(
+      #   package='isaac_ros_image_proc',
+      #   plugin='nvidia::isaac_ros::image_proc::ImageFormatConverterNode',
+      #   name='depth_format_node',
+      #   parameters=[{
+      #     'encoding_desired': 'rgb8',
+      #   }],
+      #   remappings=[
+      #     ('image_raw', '/depth/image_rect_raw'),
+      #     ('image', '/depth/image_rect_rgb8'),
+      #   ],
+      #   condition=IfCondition(log_data)
+      # ),
+      # ComposableNode(
+      #   package='isaac_ros_h264_encoder::EncoderNode',
+      #   plugin='nvidia::isaac_ros::h264_encoder::EncoderNode',
+      #   name='depth_encoder_node',
+      #   parameters=[{
+      #     'input_width': 1280,
+      #     'input_height': 720,
+      #   }],
+      #   remappings=[
+      #     ('image_raw', '/depth/image_rect_rgb8'),
+      #     ('image_compressed', '/depth/image_rect_compressed'),
+      #   ],
+      #   condition=IfCondition(log_data)
+      # ),
       ComposableNode(
         package='isaac_ros_h264_encoder',
         plugin='nvidia::isaac_ros::h264_encoder::EncoderNode',
@@ -78,6 +93,7 @@ def generate_launch_description():
           ('image_raw', '/color/image_raw'),
           ('image_compressed', '/color/image_compressed'),
         ],
+        condition=IfCondition(log_data)
       )
     ],
     output='screen',
@@ -90,16 +106,19 @@ def generate_launch_description():
   )
 
   # Rosbag recording
+  with open(log_topics_file, "r") as f:
+    topics = yaml.safe_load(f)["topics"]
   rosbag_record_node = ExecuteProcess(
     cmd=[
       'ros2', 'bag', 'record',
       '-o', rosbag_path,
-      '/depth/image_rect_compressed',
-      '/color/image_compressed',
-    ],
+    ] + topics,
+    condition=IfCondition(log_data)
   )
 
   return LaunchDescription([
+    log_data_arg,
+    rosbag_path_arg,
     vision_container,
     xrce_dds_node,
     rosbag_record_node
