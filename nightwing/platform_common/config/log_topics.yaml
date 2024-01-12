@@ -1,0 +1,5 @@
+topics:
+  # Vision topics
+  - /depth/image_rect_compressed
+  - /color/image_compressed
+  # Odometry topics
