@@ -15,7 +15,7 @@ def generate_launch_description():
 
     # Configs
     realsense_config_file_path = os.path.join(
-        get_package_share_directory('nightwing_platform_common'),
+        get_package_share_directory('nightwing_platform'),
         'config/perception/realsense.yaml'
     )
     with open(realsense_config_file_path, "r") as f:

@@ -16,7 +16,7 @@ def opaque_setup():
 
   # Config loading
   log_topics_file = os.path.join(
-    get_package_share_directory('nightwing_platform_common'),
+    get_package_share_directory('nightwing_platform'),
     'config/data/' + sl.arg('topics_filename')
   )
 

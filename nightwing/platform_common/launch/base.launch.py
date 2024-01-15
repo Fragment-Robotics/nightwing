@@ -10,7 +10,7 @@ def generate_launch_description():
   sl.declare_arg('compress_images', default_value=False, description="Enable image compression via isaac ros node")
 
   # Load camera launch
-  sl.include('nightwing_platform_common', 'camera.launch.py', launch_arguments={'compress_images': sl.arg('compress_images')})
+  sl.include('nightwing_platform', 'camera.launch.py', launch_arguments={'compress_images': sl.arg('compress_images')})
 
   # Opens the PX4-to-Jetson ROS2 bridge
   sl.add_action(
