@@ -1,4 +1,5 @@
 import os
+import yaml
 
 from ament_index_python.packages import get_package_share_directory
 from simple_launch import SimpleLauncher
@@ -10,13 +11,16 @@ def generate_launch_description():
     sl = SimpleLauncher()
 
     # Launch arguments
-    log_data = sl.declare_arg('log_data', default_value=False, description="Log data to rosbag")
+    sl.declare_arg('compress_images', default_value=False, description="Enable image compression via isaac ros node")
 
     # Configs
     realsense_config_file_path = os.path.join(
         get_package_share_directory('nightwing_platform_common'),
         'config/perception/realsense.yaml'
     )
+    with open(realsense_config_file_path, "r") as f:
+        realsense_config = yaml.safe_load(f)
+        (width, height, fps) = [int(x) for x in realsense_config['rgb_camera']['profile'].split('x')]
 
     # Create camera container and load realsense node
     with sl.container(name='camera_container'):
@@ -33,19 +37,19 @@ def generate_launch_description():
     # Logging data block. spin up h264 encoder blocks for both depth and color.
     # Note that for this to work you need to have the colorization filter enabled
     # for the realsense so we get values in rgb format. 
-    with sl.group(if_arg='log_data'):
+    with sl.group(ns='nw_perception', if_arg='compress_images'):
         with sl.container(name='/camera_container', existing=True):
             sl.node(
                 package='isaac_ros_h264_encoder',
                 plugin='nvidia::isaac_ros::h264_encoder::EncoderNode',
                 name='depth_encoder_node',
                 parameters=[{
-                    'input_width': 1280,
-                    'input_height': 720,
+                    'input_width': width,
+                    'input_height': height,
                 }],
                 remappings=[
-                    ('image_raw', '/depth/image_rect_raw'),
-                    ('image_compressed', '/depth/image_rect_compressed'),
+                    ('image_raw', '/camera/realsense_camera/depth/image_rect_raw'),
+                    ('image_compressed', '/nw/perception/depth/image_rect_compressed'),
                 ],
             )
             sl.node(
@@ -53,12 +57,12 @@ def generate_launch_description():
                 plugin='nvidia::isaac_ros::h264_encoder::EncoderNode',
                 name='color_encoder_node',
                 parameters=[{
-                    'input_width': 1280,
-                    'input_height': 720,
+                    'input_width': width,
+                    'input_height': height,
                 }],
                 remappings=[
-                    ('image_raw', '/color/image_raw'),
-                    ('image_compressed', '/color/image_compressed'),
+                    ('image_raw', '/camera/realsense_camera/color/image_raw'),
+                    ('image_compressed', '/nw/perception/color/image_compressed'),
                 ],
             )
 
