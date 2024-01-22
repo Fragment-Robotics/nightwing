@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(nightwing_platform_common)
+project(nightwing_platform)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
