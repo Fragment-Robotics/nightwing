@@ -7,6 +7,13 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(cv_bridge REQUIRED)
+find_package(message_filters REQUIRED)
+
+include_directories(include)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -20,10 +27,32 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-# Install launch files.
+add_library(rgbd_sync_store SHARED
+  src/rgbd_sync_store.cpp
+)
+ament_target_dependencies(rgbd_sync_store
+  rclcpp
+  rclcpp_components
+  sensor_msgs
+  cv_bridge
+  message_filters
+)
+rclcpp_components_register_nodes(rgbd_sync_store "nightwing::data::RGBDSyncStore")
+
+install(TARGETS
+  rgbd_sync_store
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)
+
 install(DIRECTORY
   launch
   DESTINATION share/${PROJECT_NAME}/
+)
+
+install(PROGRAMS
+  scripts/decompress_etl_entrypoint.sh
+  DESTINATION lib/${PROJECT_NAME}/
 )
 
 ament_package()
