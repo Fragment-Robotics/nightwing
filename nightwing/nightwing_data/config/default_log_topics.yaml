@@ -1,7 +1,11 @@
 topics:
   # Perception topics
-  - /nw/perception/depth/image_rect_compressed
-  - /nw/perception/color/image_compressed
+  - /nw/perception/front_camera/left/image_compressed
+  - /zed/front_camera/left/camera_info
+  - /nw/perception/front_camera/right/image_compressed
+  - /zed/front_camera/right/camera_info
+  - /zed/front_camera/depth/depth_registered
+  - /zed/front_camera/depth/depth_registered/camera_info
   # Topics from PX4
   - /fmu/out/battery_status
   - /fmu/out/estimator_status_flags
