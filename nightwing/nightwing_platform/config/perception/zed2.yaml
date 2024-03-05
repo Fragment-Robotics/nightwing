@@ -1,0 +1,28 @@
+# config/zed2_yaml
+# Parameters for Stereolabs ZED2 camera
+---
+/**:
+    ros__parameters:
+        general:            
+            camera_model: 'zed2'
+            camera_name: 'zed2' # usually overwritten by launch file
+            grab_resolution: 'HD1080' # The native camera grab resolution. 'HD2K', 'HD1080', 'HD720', 'VGA', 'AUTO'
+            grab_frame_rate: 30 # The native camera grab frame rate. 15, 30, 60, 100, 120
+            pub_frame_rate: 15
+
+        depth:
+            min_depth: 0.4 # Min: 0.2, Max: 3.0
+            max_depth: 15.0 # Max: 40.0
+
+        pos_tracking:
+            pos_tracking_enabled: false # True to enable positional tracking from start
+
+        gnss_fusion:
+            gnss_fusion_enabled: false # fuse 'sensor_msg/NavSatFix' message information into pose data
+
+        mapping:
+            mapping_enabled: false # True to enable mapping and fused point cloud pubblication
+
+        sensors:
+            publish_imu_tf: false # [usually overwritten by launch file] enable/disable the IMU TF broadcasting
+            sensors_image_sync: false # Synchronize Sensors messages with latest published video/depth message

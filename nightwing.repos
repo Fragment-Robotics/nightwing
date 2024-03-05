@@ -15,3 +15,4 @@ repositories:
     type: git
     url: https://github.com/stereolabs/zed-ros2-wrapper.git
     version: master
+    recursive: true

@@ -12,6 +12,9 @@ find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(message_filters REQUIRED)
+find_package(ZED 4 REQUIRED)
+find_package(image_transport REQUIRED)
+find_package(zed_components)
 
 include_directories(include)
 
@@ -39,8 +42,22 @@ ament_target_dependencies(rgbd_sync_store
 )
 rclcpp_components_register_nodes(rgbd_sync_store "nightwing::data::RGBDSyncStore")
 
+add_library(zed_rgb_converter SHARED
+  src/zed_rgb_converter.cpp
+)
+ament_target_dependencies(zed_rgb_converter
+  rclcpp
+  rclcpp_components
+  sensor_msgs
+  cv_bridge
+  zed_components
+  image_transport
+)
+rclcpp_components_register_nodes(zed_rgb_converter "nightwing::data::ZEDRGBConverter")
+
 install(TARGETS
   rgbd_sync_store
+  zed_rgb_converter
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
