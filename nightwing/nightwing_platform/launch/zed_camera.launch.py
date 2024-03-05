@@ -5,6 +5,9 @@ from launch.substitutions import Command
 from simple_launch import SimpleLauncher
 
 
+CAMERA_NAME = "zed2"
+CAMERA_MODEL = "zed2"
+
 def generate_launch_description():
     """Launch description for spinning up Zed camera and optional components."""
 
@@ -46,9 +49,9 @@ def generate_launch_description():
                         " ",
                         xacro_path,
                         " ",
-                        "camera_name:=zed2",
+                        f"camera_name:={CAMERA_NAME}",
                         " ",
-                        "camera_model:=zed2",
+                        f"camera_model:={CAMERA_MODEL}",
                     ]
                 )
             }
@@ -83,7 +86,8 @@ def generate_launch_description():
             #
             # Optional: Setup for depth image compression. Would need to implement a
             # custom filter to go from 16 bit depth to 24 bit color so we can use
-            # the h264 encoder. Check out https://dev.intelrealsense.com/docs/depth-image-compression-by-colorization-for-intel-realsense-depth-cameras.
+            # the h264 encoder. Check out https://dev.intelrealsense.com/docs/depth-image-compression-by-colorization-for-intel-realsense-depth-cameras
+            # with disparity image from /zed/front_camera/disparity/disparity_image
             #
             sl.node(
                 package="isaac_ros_h264_encoder",

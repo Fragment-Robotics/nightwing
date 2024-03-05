@@ -5,7 +5,8 @@ topics:
   - /nw/perception/front_camera/right/image_compressed
   - /zed/front_camera/right/camera_info
   - /zed/front_camera/depth/depth_registered
-  - /zed/front_camera/depth/depth_registered/camera_info
+  - /zed/front_camera/depth/camera_info
+  - /zed/front_camera/depth/depth_info
   # Topics from PX4
   - /fmu/out/battery_status
   - /fmu/out/estimator_status_flags
