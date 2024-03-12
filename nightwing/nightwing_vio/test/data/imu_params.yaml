@@ -1,0 +1,16 @@
+imu_params:
+  accel_noise_sigma: 0.1
+  accel_random_walk: 0.1
+  gyro_noise_sigma: 0.1
+  gyro_random_walk: 0.1
+  integration_sigma: 0.1
+  n_gravity: 9.81
+  imu_bias:
+    accel_bias:
+      x: 0
+      y: 0
+      z: 0
+    gyro_bias:
+      x: 0
+      y: 0
+      z: 0

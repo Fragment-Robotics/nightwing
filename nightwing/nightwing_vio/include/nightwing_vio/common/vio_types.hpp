@@ -5,6 +5,7 @@
 
 #include <gtsam/geometry/Point2.h>
 #include <gtsam/geometry/Point3.h>
+#include <gtsam/geometry/Pose3.h>
 #include <gtsam/base/Matrix.h>
 
 #include <opencv2/core.hpp>
@@ -13,7 +14,9 @@ namespace nightwing {
 
 namespace vio {
 
+// Keyframes
 using Timestamp = std::int64_t;
+using KeyFrameId = std::uint64_t;
 
 // GTSAM type simplications
 using Pose3 = gtsam::Pose3;
@@ -26,12 +29,9 @@ using Matrix6 = gtsam::Matrix66;
 using Matrices3f = std::vector<Matrix3, Eigen::aligned_allocator<Matrix3>>;
 using Vectors3f = std::vector<Vector3, Eigen::aligned_allocator<Vector3>>;
 
-using KeyFrameId = std::uint64_t;
-using LandmarkId = std::uint64_t;
-
+// Camera features
 using KeyPoint = cv::Point2f;
 using KeyPoints = std::vector<KeyPoint>;
-
 
 } // namespace vio
 
